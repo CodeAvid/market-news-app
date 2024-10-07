@@ -1,3 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 enum Flavor {
   production,
   staging,
@@ -20,14 +22,36 @@ class FlavorManager {
     }
   }
 
+  static String get envFileName {
+    switch (appFlavor) {
+      case Flavor.production:
+        return 'assets/env/.prod.env';
+      case Flavor.staging:
+        return 'assets/env/.stg.env';
+      case Flavor.dev:
+        return 'assets/env/.dev.env';
+    }
+  }
+
   static String get baseUrl {
     switch (appFlavor) {
       case Flavor.production:
-        return 'staging-api.scrybit.app';
+        return dotenv.get('BASE_URL');
       case Flavor.staging:
-        return 'staging-api.scrybit.app';
+        return dotenv.get('BASE_URL');
       case Flavor.dev:
-        return 'staging-api.scrybit.app';
+        return dotenv.get('BASE_URL');
+    }
+  }
+
+  static String get token {
+    switch (appFlavor) {
+      case Flavor.production:
+        return dotenv.get('API_KEY');
+      case Flavor.staging:
+        return dotenv.get('API_KEY');
+      case Flavor.dev:
+        return dotenv.get('API_KEY');
     }
   }
 }

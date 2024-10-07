@@ -3,5 +3,17 @@
     "counterAppBarTitle": "Counter",
     "@counterAppBarTitle": {
         "description": "Text shown in the AppBar of the Counter Page"
+    },
+    "userNotFound": "User not found",
+    "@userNotFound": {
+        "description": "Message shown when the user is not found"
+    },
+    "errorGettingUser": "Error getting user",
+    "@errorGettingUser": {
+        "description": "Message shown when there is an error getting the user"
+    },
+    "unableToSaveUser": "Unable to save user",
+    "@unableToSaveUser": {
+        "description": "Message shown when unable to save the user"
     }
 }

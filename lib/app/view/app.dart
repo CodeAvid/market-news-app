@@ -1,22 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:market_news_app/counter/counter.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:market_news_app/app/app_bloc_provider.dart';
+import 'package:market_news_app/app/app_data_sources.dart';
+import 'package:market_news_app/app/app_repositories.dart';
+import 'package:market_news_app/core/router/app_router.dart';
+import 'package:market_news_app/core/theme/app_theme.dart';
 import 'package:market_news_app/l10n/l10n.dart';
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
 
   @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+    return AppDataSources(
+      child: AppRepositories(
+        child: AppBlocProvider(
+          child: ScreenUtilInit(
+            designSize: const Size(375, 812),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            child: MaterialApp.router(
+              theme: AppTheme.lightTheme,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              routerConfig: appRouter,
+            ),
+          ),
         ),
-        useMaterial3: true,
       ),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: const CounterPage(),
     );
   }
 }

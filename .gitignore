@@ -110,3 +110,9 @@ app.*.map.json
 !.idea/codeStyles/
 !.idea/dictionaries/
 !.idea/runConfigurations/
+
+#
+#*.env
+#.prod.env
+#.dev.env
+#.stg.env
