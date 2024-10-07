@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:market_news_app/core/global_imports.dart';
 import 'package:market_news_app/core/utils/utils.dart';
 import 'package:market_news_app/modules/dashboard/presentation/cubit/dashboard_cubit.dart';
@@ -20,6 +21,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: context.theme.scaffoldBackgroundColor,
         title: Row(
           children: [
             BlocBuilder<DashboardCubit, DashboardState>(
@@ -44,9 +46,65 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {},
-          child: const Text('Dashboard'),
+        child: BlocBuilder<DashboardCubit, DashboardState>(
+          builder: (context, state) {
+            switch (state) {
+              case GetNewsSuccessful(:final news):
+                return ListView.builder(
+                  itemCount: news.length,
+                  itemBuilder: (context, index) {
+                    final newsItem = news[index];
+                    return ListTile(
+                      leading: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: CachedNetworkImage(
+                          imageUrl: newsItem.image,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomAutoSizeText(
+                                newsItem.source.toUpperCase(),
+                                style: context.labelMedium,
+                              ),
+                              CustomAutoSizeText(
+                                newsItem.datetime,
+                                style: context.labelMedium,
+                              ),
+                            ],
+                          ),
+                          VerticalSpace(6),
+                          CustomAutoSizeText(
+                            newsItem.headline,
+                            style: context.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              case GetNewsError(:final message):
+                return Center(
+                  child: CustomAutoSizeText(message),
+                );
+              case DashboardLoading():
+                return Center(
+                  child: const CircularProgressIndicator(),
+                );
+              default:
+                return Center(
+                  child: const CircularProgressIndicator(),
+                );
+            }
+          },
         ),
       ),
     );
@@ -57,6 +115,7 @@ class _Username extends StatelessWidget {
   const _Username({
     this.firstName = '',
   });
+
   final String firstName;
 
   @override

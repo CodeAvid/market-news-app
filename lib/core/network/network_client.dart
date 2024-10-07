@@ -12,7 +12,7 @@ class NetworkClient {
 
   final Dio _dio;
 
-  Future<Response<Map<String, dynamic>?>> get(
+  Future<Response<dynamic>> get(
     String path, {
     Object? body,
     Map<String, dynamic>? queryParameters,
@@ -107,9 +107,7 @@ class NetworkClient {
           logPrint: (text) {
             // 800 is the size of each chunk
             final pattern = RegExp('.{1,800}');
-            pattern
-                .allMatches(text.toString())
-                .forEach((match) => debugPrint(match.group(0)));
+            pattern.allMatches(text.toString()).forEach((match) => debugPrint(match.group(0)));
           },
         ),
       );

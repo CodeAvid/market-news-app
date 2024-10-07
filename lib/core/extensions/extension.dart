@@ -1,6 +1,7 @@
 import 'dart:developer' as devtools show log;
 
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart';
 import 'package:market_news_app/core/theme/theme_extension.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -49,6 +50,12 @@ extension ThemeExtension on BuildContext {
 
   /// Returns the `BodyMedium TextTheme` of the current `BuildContext`.
   TextStyle? get bodyMedium => theme.textTheme.bodyMedium;
+
+  // Returns the `LabelLarge TextTheme` of the current `BuildContext`.
+  TextStyle? get labelLarge => theme.textTheme.labelLarge;
+
+  // Returns the `LabelMedium TextTheme` of the current `BuildContext`.
+  TextStyle? get labelMedium => theme.textTheme.labelMedium;
 
   /// Returns the `BodySmall TextTheme` of the current `BuildContext`.
   TextStyle? get bodySmall => theme.textTheme.bodySmall;
@@ -121,7 +128,7 @@ extension StringX on String {
 
 extension DateTimeX on DateTime {
   String formatDate([String? pattern]) {
-    return DateFormat(pattern ?? 'dd MMM, yyyy').format(this);
+    return DateFormat(pattern ?? 'dd MMMM yyyy').format(this);
   }
 }
 
@@ -153,5 +160,19 @@ extension MoneyConverter on num {
 
   String toMoneyNoDecimal({String currency = ''}) {
     return NumberFormat.currency(symbol: currency, decimalDigits: 0).format(this);
+  }
+}
+
+class DateTimeConverter implements JsonConverter<DateTime, int> {
+  const DateTimeConverter();
+
+  @override
+  DateTime fromJson(int json) {
+    return DateTime.fromMillisecondsSinceEpoch(json * 1000, isUtc: true);
+  }
+
+  @override
+  int toJson(DateTime object) {
+    return object.millisecondsSinceEpoch;
   }
 }

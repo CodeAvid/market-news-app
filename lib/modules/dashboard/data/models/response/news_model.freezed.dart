@@ -21,6 +21,11 @@ NewsModel _$NewsModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$NewsModel {
   String get category => throw _privateConstructorUsedError;
+  String get source => throw _privateConstructorUsedError;
+  String get headline => throw _privateConstructorUsedError;
+  String get image => throw _privateConstructorUsedError;
+  @DateTimeConverter()
+  DateTime get datetime => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -33,7 +38,12 @@ abstract class $NewsModelCopyWith<$Res> {
   factory $NewsModelCopyWith(NewsModel value, $Res Function(NewsModel) then) =
       _$NewsModelCopyWithImpl<$Res, NewsModel>;
   @useResult
-  $Res call({String category});
+  $Res call(
+      {String category,
+      String source,
+      String headline,
+      String image,
+      @DateTimeConverter() DateTime datetime});
 }
 
 /// @nodoc
@@ -50,12 +60,32 @@ class _$NewsModelCopyWithImpl<$Res, $Val extends NewsModel>
   @override
   $Res call({
     Object? category = null,
+    Object? source = null,
+    Object? headline = null,
+    Object? image = null,
+    Object? datetime = null,
   }) {
     return _then(_value.copyWith(
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
+      source: null == source
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as String,
+      headline: null == headline
+          ? _value.headline
+          : headline // ignore: cast_nullable_to_non_nullable
+              as String,
+      image: null == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String,
+      datetime: null == datetime
+          ? _value.datetime
+          : datetime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ) as $Val);
   }
 }
@@ -68,7 +98,12 @@ abstract class _$$NewsModelImplCopyWith<$Res>
       __$$NewsModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String category});
+  $Res call(
+      {String category,
+      String source,
+      String headline,
+      String image,
+      @DateTimeConverter() DateTime datetime});
 }
 
 /// @nodoc
@@ -83,12 +118,32 @@ class __$$NewsModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? category = null,
+    Object? source = null,
+    Object? headline = null,
+    Object? image = null,
+    Object? datetime = null,
   }) {
     return _then(_$NewsModelImpl(
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
+      source: null == source
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as String,
+      headline: null == headline
+          ? _value.headline
+          : headline // ignore: cast_nullable_to_non_nullable
+              as String,
+      image: null == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String,
+      datetime: null == datetime
+          ? _value.datetime
+          : datetime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 }
@@ -96,17 +151,35 @@ class __$$NewsModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$NewsModelImpl implements _NewsModel {
-  const _$NewsModelImpl({required this.category});
+  const _$NewsModelImpl(
+      {this.category = '',
+      this.source = '',
+      this.headline = '',
+      this.image = '',
+      @DateTimeConverter() required this.datetime});
 
   factory _$NewsModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$NewsModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String category;
+  @override
+  @JsonKey()
+  final String source;
+  @override
+  @JsonKey()
+  final String headline;
+  @override
+  @JsonKey()
+  final String image;
+  @override
+  @DateTimeConverter()
+  final DateTime datetime;
 
   @override
   String toString() {
-    return 'NewsModel(category: $category)';
+    return 'NewsModel(category: $category, source: $source, headline: $headline, image: $image, datetime: $datetime)';
   }
 
   @override
@@ -115,12 +188,19 @@ class _$NewsModelImpl implements _NewsModel {
         (other.runtimeType == runtimeType &&
             other is _$NewsModelImpl &&
             (identical(other.category, category) ||
-                other.category == category));
+                other.category == category) &&
+            (identical(other.source, source) || other.source == source) &&
+            (identical(other.headline, headline) ||
+                other.headline == headline) &&
+            (identical(other.image, image) || other.image == image) &&
+            (identical(other.datetime, datetime) ||
+                other.datetime == datetime));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, category);
+  int get hashCode =>
+      Object.hash(runtimeType, category, source, headline, image, datetime);
 
   @JsonKey(ignore: true)
   @override
@@ -137,13 +217,27 @@ class _$NewsModelImpl implements _NewsModel {
 }
 
 abstract class _NewsModel implements NewsModel {
-  const factory _NewsModel({required final String category}) = _$NewsModelImpl;
+  const factory _NewsModel(
+      {final String category,
+      final String source,
+      final String headline,
+      final String image,
+      @DateTimeConverter() required final DateTime datetime}) = _$NewsModelImpl;
 
   factory _NewsModel.fromJson(Map<String, dynamic> json) =
       _$NewsModelImpl.fromJson;
 
   @override
   String get category;
+  @override
+  String get source;
+  @override
+  String get headline;
+  @override
+  String get image;
+  @override
+  @DateTimeConverter()
+  DateTime get datetime;
   @override
   @JsonKey(ignore: true)
   _$$NewsModelImplCopyWith<_$NewsModelImpl> get copyWith =>

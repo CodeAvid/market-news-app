@@ -20,7 +20,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         'token': FlavorManager.token,
       },
     );
-
-    return [];
+    final List<dynamic> newsList = response.data as List<dynamic>;
+    return newsList.map((news) => NewsModel.fromJson(news as StrDynamicMap)).toList();
   }
 }
