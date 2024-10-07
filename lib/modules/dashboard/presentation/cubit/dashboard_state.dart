@@ -32,6 +32,11 @@ final class GetUserInfoError extends DashboardState {
   List<Object> get props => [message];
 }
 
+final class GetNewsLoading extends DashboardState {
+  @override
+  List<Object> get props => [];
+}
+
 final class GetNewsSuccessful extends DashboardState {
   final List<NewsEntity> news;
 

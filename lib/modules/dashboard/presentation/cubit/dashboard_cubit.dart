@@ -29,7 +29,7 @@ class DashboardCubit extends Cubit<DashboardState> {
   }
 
   Future<void> getNews() async {
-    emit(DashboardLoading());
+    emit(GetNewsLoading());
     final result = await _getNewsUseCase(NoParams());
     result.fold(
       (error) => emit(GetNewsError(message: error.message)),

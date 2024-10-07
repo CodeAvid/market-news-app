@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:market_news_app/core/global_imports.dart';
 import 'package:market_news_app/core/utils/utils.dart';
 import 'package:market_news_app/modules/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'package:shimmer/shimmer.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -44,77 +45,91 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
-      body: Center(
-        child: BlocBuilder<DashboardCubit, DashboardState>(
-          builder: (context, state) {
-            switch (state) {
-              case GetNewsSuccessful(:final news):
-                return ListView.builder(
-                  itemCount: news.length,
-                  itemBuilder: (context, index) {
-                    final newsItem = news[index];
-                    return ListTile(
-                      leading: SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: CachedNetworkImage(
-                          imageUrl: newsItem.image,
-                          fit: BoxFit.fill,
-                          placeholder: (context, url) => const Center(
-                            child: CircularProgressIndicator(),
+      body: BlocBuilder<DashboardCubit, DashboardState>(
+        buildWhen: (previous, current) {
+          return current is GetNewsLoading || current is GetNewsSuccessful || current is GetNewsError;
+        },
+        builder: (context, state) {
+          switch (state) {
+            case GetNewsLoading():
+              return ListView.builder(
+                itemCount: 10, // Number of shimmer items
+                itemBuilder: (context, index) {
+                  return _ShimmerNewsItem();
+                },
+              );
+            case GetNewsSuccessful(:final news):
+              return ListView.builder(
+                itemCount: news.length,
+                itemBuilder: (context, index) {
+                  final newsItem = news[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 20, left: 20, bottom: 0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 100.w,
+                          height: 100.h,
+                          child: CachedNetworkImage(
+                            imageUrl: newsItem.image,
+                            fit: BoxFit.fill,
+                            placeholder: (context, url) => ColoredBox(
+                              color: context.secondaryColor,
+                            ),
                           ),
                         ),
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomAutoSizeText(
-                                newsItem.source.toUpperCase(),
-                                style: context.labelMedium?.copyWith(
-                                  color: context.theme.colorScheme.secondary,
+                        SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                CustomAutoSizeText(
+                                  newsItem.source.toUpperCase(),
+                                  style: context.labelMedium?.copyWith(
+                                    color: context.theme.colorScheme.secondary,
+                                  ),
                                 ),
-                              ),
-                              CustomAutoSizeText(
-                                newsItem.datetime,
-                                style: context.labelMedium?.copyWith(
-                                  color: context.theme.colorScheme.secondary,
+                                HorizontalSpace(20),
+                                CustomAutoSizeText(
+                                  newsItem.datetime,
+                                  style: context.labelMedium?.copyWith(
+                                    color: context.theme.colorScheme.secondary,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          VerticalSpace(6),
-                          CustomAutoSizeText(
-                            newsItem.headline,
-                            style: context.bodyLarge?.copyWith(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
+                              ],
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              case GetNewsError(:final message):
-                return Center(
-                  child: CustomAutoSizeText(message),
-                );
-              case DashboardLoading():
-                return Center(
-                  child: const CircularProgressIndicator(),
-                );
-              default:
-                return Center(
-                  child: const CircularProgressIndicator(),
-                );
-            }
-          },
-        ),
+                            VerticalSpace(6),
+                            SizedBox(
+                              width: 220.w,
+                              child: CustomAutoSizeText(
+                                newsItem.headline,
+                                presetFontSizes: [16.h],
+                                style: context.bodyLarge?.copyWith(
+                                  fontSize: 16.h,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            case GetNewsError(:final message):
+              return Center(
+                child: CustomAutoSizeText(message),
+              );
+            default:
+              return SizedBox();
+          }
+        },
       ),
     );
   }
@@ -137,6 +152,57 @@ class _Username extends StatelessWidget {
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+class _ShimmerNewsItem extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+        left: 20,
+        right: 20,
+        bottom: 0,
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 100.w,
+              height: 80.h,
+              color: Colors.white,
+            ),
+            SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 200.w,
+                  height: 16.h,
+                  color: Colors.white,
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: 160.w,
+                  height: 14.h,
+                  color: Colors.white,
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: 100.w,
+                  height: 14.h,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
