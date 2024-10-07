@@ -111,8 +111,8 @@ app.*.map.json
 !.idea/dictionaries/
 !.idea/runConfigurations/
 
-#
-#*.env
-#.prod.env
-#.dev.env
-#.stg.env
+
+*.env
+.prod.env
+.dev.env
+.stg.env
