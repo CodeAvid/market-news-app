@@ -26,6 +26,8 @@ class _AppState extends State<App> {
             splitScreenMode: true,
             child: MaterialApp.router(
               theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: ThemeMode.system,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               routerConfig: appRouter,

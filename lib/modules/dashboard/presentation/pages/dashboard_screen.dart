@@ -21,7 +21,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        surfaceTintColor: context.theme.scaffoldBackgroundColor,
         title: Row(
           children: [
             BlocBuilder<DashboardCubit, DashboardState>(
@@ -60,7 +59,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         height: 100,
                         child: CachedNetworkImage(
                           imageUrl: newsItem.image,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
                         ),
                       ),
                       title: Column(
@@ -71,20 +73,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             children: [
                               CustomAutoSizeText(
                                 newsItem.source.toUpperCase(),
-                                style: context.labelMedium,
+                                style: context.labelMedium?.copyWith(
+                                  color: context.theme.colorScheme.secondary,
+                                ),
                               ),
                               CustomAutoSizeText(
                                 newsItem.datetime,
-                                style: context.labelMedium,
+                                style: context.labelMedium?.copyWith(
+                                  color: context.theme.colorScheme.secondary,
+                                ),
                               ),
                             ],
                           ),
                           VerticalSpace(6),
                           CustomAutoSizeText(
                             newsItem.headline,
-                            style: context.bodyMedium?.copyWith(
+                            style: context.bodyLarge?.copyWith(
+                              fontSize: 20,
                               fontWeight: FontWeight.w500,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
