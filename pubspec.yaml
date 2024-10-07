@@ -37,6 +37,7 @@ dependencies:
   loading_icon_button: ^0.0.7
   rxdart: ^0.28.0
   flutter_svg: ^2.0.10+1
+  flutter_native_splash: ^2.4.1
 
 
 dev_dependencies:
