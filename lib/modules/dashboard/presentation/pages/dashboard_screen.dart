@@ -22,6 +22,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
         title: Row(
           children: [
             BlocBuilder<DashboardCubit, DashboardState>(
