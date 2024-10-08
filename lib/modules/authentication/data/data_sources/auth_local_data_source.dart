@@ -19,16 +19,19 @@ class AuthLocalDataSourceImpl extends AuthLocalDataSource {
 
   final AppLocalStorage appLocalStorage;
 
-  @override
-  Future<bool> saveUser(UserModel user) async {
+  Future<void> addDelay() async {
     return Future.delayed(
       const Duration(seconds: 3),
-      () async {
-        return appLocalStorage.set(
-          StorageKey.user,
-          jsonEncode(user.toJson()),
-        );
-      },
+      () async {},
+    );
+  }
+
+  @override
+  Future<bool> saveUser(UserModel user) async {
+    await addDelay();
+    return appLocalStorage.set(
+      StorageKey.user,
+      jsonEncode(user.toJson()),
     );
   }
 
@@ -48,6 +51,7 @@ class AuthLocalDataSourceImpl extends AuthLocalDataSource {
 
   @override
   Future<bool> markEnablePushNotificationScreenAsSeen({bool status = false}) async {
+    await addDelay();
     return appLocalStorage.setBool(
       StorageKey.pushNotificationStatus,
       data: status,

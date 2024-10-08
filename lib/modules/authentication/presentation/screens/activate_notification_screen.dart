@@ -1,6 +1,7 @@
 import 'package:market_news_app/core/global_imports.dart';
 import 'package:market_news_app/core/router/app_routes.dart';
 import 'package:market_news_app/core/utils/utils.dart';
+import 'package:market_news_app/core/widgets/animated_button.dart';
 import 'package:market_news_app/gen/assets.gen.dart';
 import 'package:market_news_app/modules/authentication/presentation/cubit/auth_cubit.dart';
 
@@ -35,7 +36,7 @@ class ActivatePushNotificationScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               Spacer(flex: 3),
-              BlocListener<AuthCubit, AuthState>(
+              BlocConsumer<AuthCubit, AuthState>(
                 listener: (context, state) {
                   switch (state) {
                     case MarkNotificationScreenAsSeenSuccessful():
@@ -45,25 +46,29 @@ class ActivatePushNotificationScreen extends StatelessWidget {
                     default:
                   }
                 },
-                child: AppButton(
-                  onPressed: () {
-                    showCustomAdaptiveDialog(
-                      context: context,
-                      title: '“Blott” Would Like to Send You Notifications',
-                      content:
-                          'Notifications may include alerts, sounds, and icon badges. These can be configured in Settings.',
-                      primaryButtonText: 'Allow',
-                      secondaryButtonText: 'Don\'t Allow',
-                      onPrimaryButtonPressed: () {
-                        context.read<AuthCubit>().markPushNotificationScreenAsSeen();
-                      },
-                      onSecondaryButtonPressed: () {
-                        Navigator.of(context).pop();
-                        context.read<AuthCubit>().markPushNotificationScreenAsSeen();
-                      },
-                    );
-                  },
-                ),
+                builder: (context, state) {
+                  return AnimatedButton(
+                    isLoading: state is AuthLoading,
+                    isEnable: true,
+                    onPressed: () {
+                      showCustomAdaptiveDialog(
+                        context: context,
+                        title: '“Blott” Would Like to Send You Notifications',
+                        content:
+                            'Notifications may include alerts, sounds, and icon badges. These can be configured in Settings.',
+                        primaryButtonText: 'Allow',
+                        secondaryButtonText: 'Don\'t Allow',
+                        onPrimaryButtonPressed: () {
+                          context.read<AuthCubit>().markPushNotificationScreenAsSeen();
+                        },
+                        onSecondaryButtonPressed: () {
+                          Navigator.of(context).pop();
+                          context.read<AuthCubit>().markPushNotificationScreenAsSeen();
+                        },
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

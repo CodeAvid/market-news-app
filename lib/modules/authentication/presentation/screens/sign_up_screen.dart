@@ -1,8 +1,8 @@
-import 'package:loading_icon_button/loading_icon_button.dart';
 import 'package:market_news_app/core/global_imports.dart';
 import 'package:market_news_app/core/router/app_routes.dart';
 import 'package:market_news_app/core/utils/form_validation.dart';
 import 'package:market_news_app/core/utils/utils.dart';
+import 'package:market_news_app/core/widgets/animated_button.dart';
 import 'package:market_news_app/core/widgets/custom_textfield.dart';
 import 'package:market_news_app/modules/authentication/config/params/user_params.dart';
 import 'package:market_news_app/modules/authentication/presentation/cubit/auth_cubit.dart';
@@ -91,26 +91,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   },
                 ),
                 Spacer(),
-                // LoadingButton(
-                //   showBox: true,
-                //   primaryColor: Colors.white,
-                //   iconColor: Colors.deepPurpleAccent,
-                //   valueColor: const Color(0xff0066ff),
-                //   errorColor: const Color(0xffe0333c),
-                //   successColor: const Color(0xff58B09C),
-                //   iconData: Icons.arrow_forward_ios,
-                //   onPressed: () {
-                //     Future.delayed(const Duration(seconds: 1), () {
-                //       _btnController3.error();
-                //       Future.delayed(const Duration(seconds: 2), () {
-                //         _btnController3.reset();
-                //       });
-                //     });
-                //   },
-                //   successIcon: Icons.arrow_forward_ios,
-                //   controller: _btnController3,
-                // ),
-                BlocListener<AuthCubit, AuthState>(
+                BlocConsumer<AuthCubit, AuthState>(
                   listener: (context, state) {
                     switch (state) {
                       case SaveUserSuccessful():
@@ -118,46 +99,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       case AuthError():
                       default:
                     }
-                    if (state is SaveUserSuccessful) {
-                    } else if (state is AuthError) {}
                   },
-                  child: ValueListenableBuilder(
-                    valueListenable: _isEnabled,
-                    builder: (BuildContext context, bool isEnable, Widget? child) {
-                      return ArgonButton(
-                        height: 60,
-                        roundLoadingShape: false,
-                        width: 200,
-                        onTap: isEnable ? _signUpUser : null,
-                        loader: const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Continue',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
-                            ),
-                            HorizontalSpace(10.w),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                        borderRadius: 40.0,
-                        color: isEnable ? context.primaryColor : context.primaryContainerColor,
-                      );
-                    },
-                  ),
+                  builder: (context, state) {
+                    return ValueListenableBuilder(
+                      valueListenable: _isEnabled,
+                      builder: (BuildContext context, bool isEnable, Widget? child) {
+                        return AnimatedButton(
+                          isLoading: state is AuthLoading,
+                          isEnable: isEnable,
+                          onPressed: () {
+                            _signUpUser();
+                          },
+                        );
+                      },
+                    );
+                  },
                 ),
                 VerticalSpace(20.h),
               ],
@@ -168,13 +124,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Future<void> _signUpUser(
-    Function startLoading,
-    Function stopLoading,
-    ArgonButtonState btnState,
-  ) async {
+  Future<void> _signUpUser() async {
     if (_formKey.currentState!.validate()) {
-      startLoading();
       final user = UserParams(
         firstName: _firstNameController!.text,
         lastName: _lastNameController!.text,

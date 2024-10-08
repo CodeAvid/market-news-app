@@ -18,6 +18,7 @@ class AuthCubit extends Cubit<AuthState> {
   final MarkEnablePushNotificationScreenAsSeenUseCase _markEnablePushNotificationScreenAsSeenUseCase;
 
   Future<void> saveUser(UserParams userParams) async {
+    emit(AuthLoading());
     final result = await _saveUserUseCase(userParams);
     result.fold(
       (failure) => emit(AuthError(failure.message)),
@@ -33,6 +34,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> markPushNotificationScreenAsSeen() async {
+    emit(AuthLoading());
     final result = await _markEnablePushNotificationScreenAsSeenUseCase.call(NoParams());
     result.fold(
       (failure) => emit(MarkNotificationScreenAsSeenError(failure.message)),

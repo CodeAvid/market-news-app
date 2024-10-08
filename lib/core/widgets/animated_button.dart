@@ -1,214 +1,92 @@
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
-
-enum ButtonState { idle, loading, success, error }
+import 'package:market_news_app/core/extensions/extension.dart';
+import 'package:market_news_app/core/widgets/custom_auto_size_text.dart';
 
 class AnimatedButton extends StatefulWidget {
+  final bool isLoading;
+  final bool isEnable;
+  final bool keyboardAutoDetect;
+  final VoidCallback? onPressed; // Custom on-press action from constructor
+  final String text;
+
   const AnimatedButton({
     Key? key,
-    required this.onPressed,
-    required this.controller,
-    this.height = 55.0,
-    this.width = 225.0,
-    this.loaderSize = 50.0,
-    this.loaderStrokeWidth = 1.5,
-    this.primaryColor,
-    this.errorColor = Colors.redAccent,
-    this.successColor = Colors.green,
-    this.iconColor,
-    this.iconData,
-    this.successIcon = Icons.check,
-    this.failedIcon = Icons.close,
-    this.duration = const Duration(milliseconds: 500),
-    this.borderRadius = 25.0,
+    required this.isLoading, // Loading state
+    required this.isEnable, // Button enabled/disabled state
+    this.keyboardAutoDetect = true, // Toggle for keyboard detection
+    this.onPressed,
+    this.text = 'Continue', // User-defined onPress callback
   }) : super(key: key);
 
-  /// Callback when the button is pressed
-  final VoidCallback onPressed;
-
-  /// Controller to manage button states
-  final AnimatedButtonController controller;
-
-  /// Button height
-  final double height;
-
-  /// Button width
-  final double width;
-
-  /// Loader size
-  final double loaderSize;
-
-  /// Loader stroke width
-  final double loaderStrokeWidth;
-
-  /// Primary color of the button
-  final Color? primaryColor;
-
-  /// Error state color
-  final Color? errorColor;
-
-  /// Success state color
-  final Color? successColor;
-
-  /// Icon color for the button
-  final Color? iconColor;
-
-  /// Icon to display in the button
-  final IconData? iconData;
-
-  /// Success state icon
-  final IconData successIcon;
-
-  /// Error state icon
-  final IconData failedIcon;
-
-  /// Animation duration
-  final Duration duration;
-
-  /// Border radius of the button
-  final double borderRadius;
-
   @override
-  AnimatedButtonState createState() => AnimatedButtonState();
+  _AnimatedButtonState createState() => _AnimatedButtonState();
 }
 
-class AnimatedButtonState extends State<AnimatedButton> with TickerProviderStateMixin {
-  late AnimationController _buttonController;
-  late Animation<double> _squeezeAnimation;
-  final _state = BehaviorSubject<ButtonState>.seeded(ButtonState.idle);
+class _AnimatedButtonState extends State<AnimatedButton> {
+  late bool _keyboardIsOpen;
 
   @override
   void initState() {
     super.initState();
-    _buttonController = AnimationController(duration: widget.duration, vsync: this);
-
-    _squeezeAnimation = Tween<double>(begin: widget.width, end: widget.height)
-        .animate(CurvedAnimation(parent: _buttonController, curve: Curves.easeInOutCirc));
-
-    _squeezeAnimation.addListener(() {
-      setState(() {});
-    });
-
-    // Link the controller methods to the state changes
-    widget.controller._addListeners(_startLoading, _success, _error, _reset);
-  }
-
-  @override
-  void dispose() {
-    _buttonController.dispose();
-    _state.close();
-    super.dispose();
+    _keyboardIsOpen = false; // Initial keyboard state
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final buttonState = _state.value;
-
-    Widget buildChild() {
-      if (buttonState == ButtonState.loading) {
-        return SizedBox(
-          height: widget.loaderSize,
-          width: widget.loaderSize,
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(
-              widget.iconColor ?? theme.primaryColor,
-            ),
-            strokeWidth: widget.loaderStrokeWidth,
-          ),
-        );
-      } else if (buttonState == ButtonState.success) {
-        return Icon(
-          widget.successIcon,
-          color: widget.successColor,
-        );
-      } else if (buttonState == ButtonState.error) {
-        return Icon(
-          widget.failedIcon,
-          color: widget.errorColor,
-        );
-      } else {
-        // Default idle state
-        return Icon(
-          widget.iconData,
-          color: widget.iconColor,
-        );
-      }
+    // Detect keyboard state if enabled
+    if (widget.keyboardAutoDetect) {
+      _keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     }
 
-    return SizedBox(
-      height: widget.height,
-      width: _squeezeAnimation.value,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(widget.borderRadius),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: GestureDetector(
+        onTap: widget.isEnable && !widget.isLoading
+            ? widget.onPressed
+            : null, // Use the custom onPress from the constructor
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          height: 56,
+          width: _keyboardIsOpen ? 56 : double.infinity, // Width based on keyboard state
+          margin: EdgeInsets.symmetric(horizontal: _keyboardIsOpen ? 0 : 20), // Margin for better appearance
+          decoration: BoxDecoration(
+            color: widget.isEnable ? context.primaryColor : context.primaryContainerColor, // Active/Inactive state
+            borderRadius: BorderRadius.circular(_keyboardIsOpen ? 28 : 30),
           ),
-          backgroundColor: buttonState == ButtonState.success
-              ? widget.successColor
-              : buttonState == ButtonState.error
-                  ? widget.errorColor
-                  : widget.primaryColor ?? theme.primaryColor,
-        ),
-        onPressed: _state.value == ButtonState.loading ? null : widget.onPressed,
-        child: Center(
-          child: buildChild(),
+          child: Center(
+            child: _buildButtonContent(),
+          ),
         ),
       ),
     );
   }
 
-  void _startLoading() {
-    _state.sink.add(ButtonState.loading);
-    _buttonController.forward();
-  }
-
-  void _success() {
-    _state.sink.add(ButtonState.success);
-    _buttonController.reverse();
-  }
-
-  void _error() {
-    _state.sink.add(ButtonState.error);
-    _buttonController.reverse();
-  }
-
-  void _reset() {
-    _state.sink.add(ButtonState.idle);
-    _buttonController.reverse();
-  }
-}
-
-class AnimatedButtonController {
-  late VoidCallback _startLoadingListener;
-  late VoidCallback _successListener;
-  late VoidCallback _errorListener;
-  late VoidCallback _resetListener;
-
-  void _addListeners(VoidCallback startLoading, VoidCallback success, VoidCallback error, VoidCallback reset) {
-    _startLoadingListener = startLoading;
-    _successListener = success;
-    _errorListener = error;
-    _resetListener = reset;
-  }
-
-  /// Start the loading process
-  void startLoading() {
-    _startLoadingListener();
-  }
-
-  /// Set the button to the success state
-  void success() {
-    _successListener();
-  }
-
-  /// Set the button to the error state
-  void error() {
-    _errorListener();
-  }
-
-  /// Reset the button to its default state
-  void reset() {
-    _resetListener();
+  // Builds the button content with text and spinner based on loading state
+  Widget _buildButtonContent() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (widget.isLoading) ...[
+          SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              strokeWidth: 2,
+            ),
+          ),
+          SizedBox(width: 10), // Spacing between spinner and text
+        ],
+        CustomAutoSizeText(
+          widget.text,
+          style: context.bodyMedium?.copyWith(
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
   }
 }
