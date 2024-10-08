@@ -7,6 +7,13 @@
 
 My Market News App
 
+## Screen Recording 
+
+
+Uploading Simulator Screen Recording - iPhone 15 Plus - 2024-10-08 at 09.19.24.mp4…
+
+
+
 ---
 
 ## Getting Started 🚀
