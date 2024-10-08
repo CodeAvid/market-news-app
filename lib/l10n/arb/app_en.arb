@@ -15,5 +15,21 @@
     "unableToSaveUser": "Unable to save user",
     "@unableToSaveUser": {
         "description": "Message shown when unable to save the user"
+    },
+    "authLoading": "Loading...",
+    "@authLoading": {
+        "description": "Message shown when authentication is in progress"
+    },
+    "saveUserSuccessful": "User saved successfully",
+    "@saveUserSuccessful": {
+        "description": "Message shown when the user is saved successfully"
+    },
+    "markNotificationScreenAsSeenSuccessful": "Notification screen marked as seen",
+    "@markNotificationScreenAsSeenSuccessful": {
+        "description": "Message shown when the notification screen is marked as seen"
+    },
+    "markNotificationScreenAsSeenError": "Unable to mark notification screen as seen",
+    "@markNotificationScreenAsSeenError": {
+        "description": "Message shown when unable to mark the notification screen as seen"
     }
 }

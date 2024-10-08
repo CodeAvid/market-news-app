@@ -5,17 +5,19 @@ import 'package:market_news_app/core/widgets/custom_auto_size_text.dart';
 class AnimatedButton extends StatefulWidget {
   final bool isLoading;
   final bool isEnable;
+  final bool keyboardIsOpen;
   final bool keyboardAutoDetect;
-  final VoidCallback? onPressed; // Custom on-press action from constructor
-  final String text;
+  final String buttonText; // Button text from constructor, default is "Continue"
+  final VoidCallback? onPressed;
 
   const AnimatedButton({
     Key? key,
     required this.isLoading, // Loading state
-    required this.isEnable, // Button enabled/disabled state
+    required this.isEnable, // Enabled/Disabled state
     this.keyboardAutoDetect = true, // Toggle for keyboard detection
-    this.onPressed,
-    this.text = 'Continue', // User-defined onPress callback
+    this.keyboardIsOpen = false, // Toggle for keyboard detection
+    this.buttonText = "Continue", // Default button text
+    this.onPressed, // Custom onPress callback
   }) : super(key: key);
 
   @override
@@ -23,51 +25,42 @@ class AnimatedButton extends StatefulWidget {
 }
 
 class _AnimatedButtonState extends State<AnimatedButton> {
-  late bool _keyboardIsOpen;
-
-  @override
-  void initState() {
-    super.initState();
-    _keyboardIsOpen = false; // Initial keyboard state
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Detect keyboard state if enabled
-    if (widget.keyboardAutoDetect) {
-      _keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-    }
-
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: GestureDetector(
-        onTap: widget.isEnable && !widget.isLoading
-            ? widget.onPressed
-            : null, // Use the custom onPress from the constructor
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          height: 56,
-          width: _keyboardIsOpen ? 56 : double.infinity, // Width based on keyboard state
-          margin: EdgeInsets.symmetric(horizontal: _keyboardIsOpen ? 0 : 20), // Margin for better appearance
-          decoration: BoxDecoration(
-            color: widget.isEnable ? context.primaryColor : context.primaryContainerColor, // Active/Inactive state
-            borderRadius: BorderRadius.circular(_keyboardIsOpen ? 28 : 30),
-          ),
-          child: Center(
-            child: _buildButtonContent(),
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: widget.isEnable && !widget.isLoading
+              ? widget.onPressed
+              : null, // Trigger the onPress callback if button is enabled and not loading
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            alignment: widget.keyboardAutoDetect && widget.keyboardIsOpen ? Alignment.centerRight : null,
+            child: Container(
+              height: 56,
+              width: widget.keyboardAutoDetect && widget.keyboardIsOpen
+                  ? 56
+                  : double.infinity, // Adjust width based on keyboard state
+              decoration: BoxDecoration(
+                color: widget.isEnable ? context.primaryColor : context.primaryContainerColor, // Enabled/Disabled state
+                borderRadius: BorderRadius.circular(widget.keyboardAutoDetect && widget.keyboardIsOpen ? 28 : 30),
+              ),
+              child: _buildButtonContent(widget.keyboardAutoDetect && widget.keyboardIsOpen),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
   // Builds the button content with text and spinner based on loading state
-  Widget _buildButtonContent() {
+  Widget _buildButtonContent(bool isKeyboardOpen) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (widget.isLoading) ...[
+        if (widget.isLoading && !isKeyboardOpen) ...[
           SizedBox(
             height: 20,
             width: 20,
@@ -76,16 +69,32 @@ class _AnimatedButtonState extends State<AnimatedButton> {
               strokeWidth: 2,
             ),
           ),
-          SizedBox(width: 10), // Spacing between spinner and text
+          const SizedBox(width: 10), // Spacing between spinner and text
         ],
-        CustomAutoSizeText(
-          widget.text,
-          style: context.bodyMedium?.copyWith(
-            fontSize: 16,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        isKeyboardOpen
+            ? Visibility(
+                visible: !widget.isLoading,
+                replacement: SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    strokeWidth: 2,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.white,
+                ),
+              )
+            : CustomAutoSizeText(
+                widget.buttonText,
+                style: context.bodyMedium?.copyWith(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
       ],
     );
   }
