@@ -55,7 +55,6 @@ class NetworkException implements Exception {
       final errorResponse = response.data as Map<String, dynamic>?;
       final error = errorResponse?['error'] as bool;
       return error ? (errorResponse?['message'] as String?) ?? '' : '';
-      return '';
     } else {
       switch (response.statusCode) {
         case 400:
