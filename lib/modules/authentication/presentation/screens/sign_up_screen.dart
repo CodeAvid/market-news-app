@@ -55,75 +55,72 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(right: 20.sp, left: 20.sp, top: 12.sp),
-            child: Form(
-              key: _formKey,
-              onChanged: () {
-                _checkIfFormIsValid();
-              },
-              child: Column(
-                children: [
-                  CustomAutoSizeText(
-                    'We need to know a bit about you so that we can create your account.',
-                    style: context.bodyLarge?.copyWith(
-                      color: Color(0xFF737373),
-                      fontSize: 16.sp,
-                    ),
+        child: Padding(
+          padding: EdgeInsets.only(right: 20.sp, left: 20.sp, top: 12.sp),
+          child: Form(
+            key: _formKey,
+            onChanged: () {
+              _checkIfFormIsValid();
+            },
+            child: Column(
+              children: [
+                CustomAutoSizeText(
+                  'We need to know a bit about you so that we can create your account.',
+                  style: context.bodyLarge?.copyWith(
+                    color: Color(0xFF737373),
+                    fontSize: 16.sp,
                   ),
-                  VerticalSpace(10.h),
-                  CustomTextField(
-                    controller: _firstNameController,
-                    hintText: 'First name',
-                    validator: (value) {
-                      return context.validateNotEmptyField(
-                        value,
-                        'First name',
-                      );
-                    },
-                  ),
-                  VerticalSpace(10.h),
-                  CustomTextField(
-                    controller: _lastNameController,
-                    hintText: 'Last name',
-                    validator: (value) {
-                      return context.validateNotEmptyField(
-                        value,
-                        'Last name',
-                      );
-                    },
-                  ),
-                  // Spacer(),
-                  VerticalSpace(20.h), // Add vertical space
-                  BlocConsumer<AuthCubit, AuthState>(
-                    listener: (context, state) {
-                      switch (state) {
-                        case SaveUserSuccessful():
-                          context.go(Routes.activateNotification);
-                        case AuthError():
-                        default:
-                      }
-                    },
-                    builder: (context, state) {
-                      return ValueListenableBuilder(
-                        valueListenable: _isEnabled,
-                        builder: (BuildContext context, bool isEnable, Widget? child) {
-                          return AnimatedButton(
-                            isLoading: state is AuthLoading,
-                            isEnable: isEnable,
-                            keyboardIsOpen: _keyboardIsOpen,
-                            onPressed: () {
-                              _signUpUser();
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  VerticalSpace(20.h),
-                ],
-              ),
+                ),
+                VerticalSpace(10.h),
+                CustomTextField(
+                  controller: _firstNameController,
+                  hintText: 'First name',
+                  validator: (value) {
+                    return context.validateNotEmptyField(
+                      value,
+                      'First name',
+                    );
+                  },
+                ),
+                VerticalSpace(10.h),
+                CustomTextField(
+                  controller: _lastNameController,
+                  hintText: 'Last name',
+                  validator: (value) {
+                    return context.validateNotEmptyField(
+                      value,
+                      'Last name',
+                    );
+                  },
+                ),
+                Spacer(),
+                BlocConsumer<AuthCubit, AuthState>(
+                  listener: (context, state) {
+                    switch (state) {
+                      case SaveUserSuccessful():
+                        context.go(Routes.activateNotification);
+                      case AuthError():
+                      default:
+                    }
+                  },
+                  builder: (context, state) {
+                    return ValueListenableBuilder(
+                      valueListenable: _isEnabled,
+                      builder: (BuildContext context, bool isEnable, Widget? child) {
+                        return AnimatedButton(
+                          isLoading: state is AuthLoading,
+                          isEnable: isEnable,
+                          keyboardIsOpen: _keyboardIsOpen,
+                          onPressed: () {
+                            _signUpUser();
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+                VerticalSpace(20.h),
+              ],
             ),
           ),
         ),
