@@ -44,7 +44,7 @@ dev_dependencies:
   bloc_test: ^9.1.7
   build_runner: ^2.4.7
   build_verify: ^3.1.0
-  drift_dev: ^2.20.3
+  drift_dev: ^2.21.2
   flutter_gen_runner: ^5.8.0
   flutter_test:
     sdk: flutter
