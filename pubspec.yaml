@@ -10,7 +10,7 @@ dependencies:
   auto_size_text: ^3.0.0
   cached_network_image: ^3.4.1
   dio: ^5.7.0
-  drift: ^2.20.3
+  drift: ^2.23.0
   equatable: ^2.0.5
   flex_color_scheme: ^7.3.1
   flutter:
